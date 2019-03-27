@@ -1,0 +1,82 @@
+
+{% extends 'pmanager/base.html' %}
+{% block title %}إدارة المشروع{% endblock %}
+{% block body %}
+        <style>
+            .cols {
+                height: 100px;
+                width: 100% !important;
+                margin: 1%;
+                padding: 15px;
+                border: 1px solid #328393;
+                border-radius: 15px;
+                margin-bottom: 25px !important;
+                font-size: 18pt;
+                text-align: center;
+                color: #328393
+            }
+        .cols:hover{
+            color: #fff;
+            background-color: #328393;
+        }
+    </style>
+
+    <div class="center" style="width: 90%; margin-right: 5%; height: 600px">
+        {% for foo in detail %}
+   <h3 class="text-center text-secondary">
+         <span style="color:#328393">اسم المشروع: </span> {{ foo.mub_name }}
+   </h3>
+            <hr>
+            <br>
+    <div class="container" style="margin-top: 2%">
+        <div class="row">
+             <div class="col-4">
+                <a href="{% url 'pmanager:goals'  %}" style="">
+                    <div class="cols">
+                         أهداف المشروع
+                    </div>
+                </a>
+            </div>
+            <div class="col-4">
+                <a href="{% url 'pmanager:supports' %}" style="">
+                    <div class="cols">
+                    الدعم المطلوب
+                    </div>
+                </a>
+            </div>
+             <div class="col-4">
+                <a href="{% url 'pmanager:risks'  %}" style="">
+                    <div class="cols">
+                    المخاطر
+                    </div>
+                </a>
+            </div>
+             <div class="col-4">
+                <a href="{% url 'pmanager:challenges'  %}" style="">
+                    <div class="cols">
+                    التحديات
+                    </div>
+                </a>
+            </div>
+             <div class="col-4">
+                <a href="{% url 'pmanager:stages'  %}" style="">
+                    <div class="cols">
+                    مراحل المشروع
+                    </div>
+                </a>
+            </div>
+             <div class="col-4">
+                <a href="{% url 'pmanager:reports'  %}" style="">
+                    <div class="cols">
+                   التقارير الأسبوعية
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+{% endfor %}
+
+{% endblock %}

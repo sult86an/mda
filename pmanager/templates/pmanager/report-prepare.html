@@ -1,0 +1,205 @@
+{% extends 'pmanager/base.html' %}
+{% block title %}إعداد التقرير{% endblock %}
+{% block body %}
+      <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+    <style>
+    .stage-btn{
+        border: none;
+        background: none;
+    }
+</style>
+    <div class="center" style="width: 90%; margin-right: 5%; ">
+        <div class="container-fluid">
+        <div class="row" style="width: 97%; margin-right: 1.5%">
+            <div class="col-12">
+            <h3 class="text-center text-secondary">إعداد التقرير</h3>
+                <hr>
+                <br>
+            <input class="form-control text-center" disabled type="text" id="title" name="title" value="{{ week_ar.0 }}">
+                <br>
+                 <table class="table ">
+                    <tr style="background-color: #EAECEF">
+                        <td>المرحلة</td>
+                        <td>الوزن من 100</td>
+                        <td>تاريخ الإنتهاء</td>
+                        <td>الإنجاز من 100</td>
+                        <td>التقدم بالمرحلة</td>
+                        <td class="text-center">التفاصيل</td>
+                        <td>تعديل / حفظ</td>
+                    </tr>
+                  <tbody id="tbodytmpitem">
+{#             {{ week_ar.0.id }} <br>#}
+                 {{ week_ar.0.mainstage.stage }}
+
+                        {% for foo in week_ar.0.mub_r.stages_set.all %}
+                            {% for fooo in week_ar.0.mainstage_set.all %}
+                                {% if foo.id == fooo.stage.id %}
+                                    <form autocomplete="off" class="form-horizontal" action="{% url 'pmanager:stageUpdate' fooo.pk  %}"  method="get"  novalidate>
+                                    {% csrf_token %}
+                                    <tr id="{{ foo.id }}">
+                                        <td style="display: none"><input class="stage-btn" type="text"  name="report" id="id_report" value="{{ fooo.report.id }}"></td>
+                                        <td style="display: none" ><input class="stage-btn" type="text"  id="id_stage" name="stage" value="{{ foo.id }}"></td>
+                                        <td>{{ foo.stage }}</td>
+                                        <td ><input  class="stage-btn" type="text" name="ratio" id="id_ratio{{ forloop.parentloop.counter }}" value="{{ foo.ratio }}" > </td>
+                                        <td><input class="stage-btn" type="text" name="end_date" id="id_end_date" value="{{ foo.end_date }}" ></td>
+                                        <td><input  disabled onchange="myfunc()" style="width:40%" class="form-control" type="text" id="id_progress_num{{ forloop.parentloop.counter}}" name="progress_num" value="{{ fooo.progress_num }}">
+                                        </td>
+                                        <td><input  disabled class="form-control"  style="width:40%" name="final_rate" value="{{ fooo.final_rate }}" id="id_final_rate{{ forloop.parentloop.counter }}" type="text"></td>
+                                         <td>
+                                            <textarea disabled name="info" rows="2" cols="20" required >{{ fooo.info }}</textarea>
+                                         </td>
+                                          <td class="text-center">
+                                              <button id="btnEdit{{ forloop.parentloop.counter }}" class="btn" type="submit" style="font-size:large; color: grey; background: none">
+                                                     <i class="far fa-edit"></i>
+                                              </button>
+                                          </td>
+                                    </tr>
+                              </form>
+                                {% endif %}
+                            {% endfor %}
+                           <input id="count" name="" type="hidden" value="{{ forloop.revcounter }}">
+                           {% endfor %}
+                   </tbody>
+                   {% for foo in week_ar.0.mub_r.stages_set.all %}
+                               <form autocomplete="off"  class="form-horizontal" action="{% url 'pmanager:insert-stage' foo.id %}"  method="post" novalidate>
+                                            {% csrf_token %}
+                                            <tr  class="{{ foo.id  }}" id="{{ foo.id }}" style="background-color: lightgray; border: 1px solid darkred !important;">
+                                                <td style="display: none"><input class="stage-btn" type="text"  name="report" id="id_report" value="{{ week_ar.0.id }}"></td>
+                                                <td style="display: none" ><input class="stage-btn" type="text"  id="id_stage" name="stage" value="{{ foo.id }}"></td>
+                                                <td>{{ foo.stage }}</td>
+                                                <td ><input class="stage-btn" type="text" name="ratio" id="id_ratio{{ forloop.counter }}" value="{{ foo.ratio }}" > </td>
+                                                <td><input class="stage-btn" type="text" name="end_date" id="id_end_date" value="{{ foo.end_date }}" ></td>
+                                                <td><input onchange="myfunc()" style="width: 40%" class="form-control" type="text" id="id_progress_num{{ forloop.counter }}" name="progress_num" value="" disabled>
+                                                </td>
+                                                <td><input  class="form-control"  style="width: 40%" name="final_rate" value="0" id="id_final_rate{{ forloop.counter }}" type="number" disabled></td>
+                                                 <td>
+                                                    <textarea name="info" rows="2" cols="20" required disabled></textarea>
+                                                 </td>
+
+                                                  <td class="text-center">
+                                                      <button class="btn"  type="submit" style="font-size:large; color: darkred ; background: none">
+                                                          <i class="far fa-edit"></i>
+                                                      </button>
+                                                  </td>
+                                            </tr>
+                                         </form>
+                            <input id="count" name="" type="hidden" value="{{ forloop.revcounter }}">
+                           {% endfor %}
+                     <hr>
+                 </table>
+                <hr>
+            <br>
+              <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <form autocomplete="off" class="form-group" action="{% url 'pmanager:ReportReadyUpdate' week_ar.0.id %}" method="post">
+                         {% csrf_token %}
+                    <button id="send_report" class="btn  form-control" style="border: 1px solid #37B8A9; color: #062c33;" type="submit" disabled>
+                        اعتماد وإرسال التقرير
+                    </button>
+                        <input type="hidden" name="week" id="id_week" value="{{ week_ar.0.id }}">
+                        <input type="hidden" name="ready" id="id_ready" value="{{ 'True' }}">
+                        <input type="hidden" name="ratio" id="report_rate" value="">
+                </form>
+                </div>
+                <div class="col-4"></div>
+            </div>
+
+         </div>
+        </div>
+     </div>
+    </div>
+
+    <br>
+    <script>
+        var count = document.getElementById('count').value;
+ console.log(count);
+    function myfunc() {
+
+        for (var i = 1; i<= count ; i++) {
+            var a = document.getElementById('id_ratio'+i).value;
+            var b = document.getElementById('id_progress_num'+i).value;
+            var d = parseInt(a);
+            var e = parseInt(b);
+            var final =( d * e) / 100;
+                  document.getElementById('id_final_rate'+i).value = final;
+        }
+    }
+
+    function f() {
+        for (var i = 1; i <= count; i++) {
+            $("#btnEdit" + i).click(function () {
+                $("#btnSave" + i).show();
+            });
+ var tt = ('hi'+i);
+ console.log(tt);
+        }
+
+    }
+
+
+    </script>
+    <script>
+        var arr = [];
+
+$("#tbodytmpitem tr").each(function() {
+  arr.push(this.id);
+});
+
+console.log(arr);
+        var i;
+        for ( i=0; i<arr.length; i++) {
+            var a = document.getElementsByClassName(arr[i])[0].id;
+           document.getElementsByClassName(a)[0].style.display='none';
+           console.log(a);
+        }
+
+
+         var count = document.getElementById('count').value;
+         var report_rate;
+         var report = 0;
+
+            for ( var x=0; x < count; x++) {
+                var b = x+1;
+                 report_rate = document.getElementById('id_final_rate'+b).value;
+
+                 report += parseFloat(report_rate);
+            }
+            document.getElementById('report_rate').value = report;
+             console.log(report);
+
+
+        if ( i == count){
+             document.getElementById('send_report').disabled= false;
+        }
+
+
+
+
+
+
+
+
+
+{##}
+{#console.log(arr);#}
+{#if (arr[0] = 50){#}
+{#    console.log("yess");#}
+{#        }#}
+{#             var count = document.getElementById('count').value;#}
+{#             console.log(count);#}
+{##}
+{#        var arr2 = [];#}
+{##}
+{#        for (var i = 1; i<= count ; i++) {#}
+{#            var a = document.getElementsByClassName(i)[0].id;#}
+{##}
+{#            var n = arr.includes(a);#}
+{#             arr2.push(a);#}
+{#    }#}
+{#console.log(arr2);#}
+
+
+    </script>
+{% endblock %}

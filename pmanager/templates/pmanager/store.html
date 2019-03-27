@@ -1,0 +1,66 @@
+  {% for foo in week_ar.0.mub_r.stages_set.all %}
+                    {% with a=forloop.counter  %}
+                        {% for fooo in week_ar.0.mainstage_set.all %}
+                            {% with b=forloop.counter %}
+                                {% if b == forloop.counter %}
+                                    {% if fooo.report == week_ar.0 and fooo.stage.id == foo.id %}
+                                        <form autocomplete="off" class="form-horizontal" action="{% url 'pmanager:stageUpdate' fooo.pk  %}"  method="get"  novalidate>
+                                    {% csrf_token %}
+                                    <tr>
+                                        <td>{{ forloop.parentloop.counter }}</td>
+                                        <td style="display: none"><input class="stage-btn" type="text"  name="report" id="id_report" value="{{ fooo.report.id }}"></td>
+                                        <td style="display: none" ><input class="stage-btn" type="text"  id="id_stage" name="stage" value="{{ foo.id }}"></td>
+                                        <td>{{ foo.stage }}</td>
+                                        <td ><input  class="stage-btn" type="text" name="ratio" id="id_ratio{{ forloop.parentloop.counter }}" value="{{ foo.ratio }}" > </td>
+                                        <td><input class="stage-btn" type="text" name="end_date" id="id_end_date" value="{{ foo.end_date }}" disabled></td>
+                                        <td><input  disabled onchange="myfunc()" style="width:40%" class="form-control" type="text" id="id_progress_num{{ forloop.parentloop.counter}}" name="progress_num" value="{{ fooo.progress_num }}">
+                                        </td>
+                                        <td><input  disabled class="form-control"  style="width:40%" name="final_rate" value="{{ fooo.final_rate }}" id="id_final_rate{{ forloop.parentloop.counter }}" type="text"></td>
+                                         <td>
+                                            <textarea disabled name="info" rows="2" cols="20" required >{{ fooo.info }}</textarea>
+                                         </td>
+                                          <td class="text-center">
+                                              <button id="btnEdit{{ forloop.parentloop.counter }}" class="btn" type="submit" style="font-size:large; color: grey; background: none">
+                                                     <i class="far fa-edit"></i>
+                                              </button>
+                                          </td>
+                                    </tr>
+                              </form>
+                                    {% endif %}
+                              {% elif foo.id != None %}
+                                    {{ foo }}
+                                {% endif %}
+                            {% endwith %}
+                            {% if not foo.id != fooo.stage.id and forloop.parentloop.counter < b%}
+                                    {{ foo }} <br>
+                            {% endif %}
+                        {% empty %}
+                            <form autocomplete="off" class="form-horizontal" action="{% url 'pmanager:insert-stage' foo.id %}"  method="post" novalidate>
+                                            {% csrf_token %}
+                                            <tr style="background-color: lightgray; border: 1px solid darkred !important;">
+                                                <td>{{ forloop.counter }}</td>
+                                                <td style="display: none"><input class="stage-btn" type="text"  name="report" id="id_report" value="{{ week_ar.0.id }}"></td>
+                                                <td style="display: none" ><input class="stage-btn" type="text"  id="id_stage" name="stage" value="{{ foo.id }}"></td>
+                                                <td>{{ foo.stage }}</td>
+                                                <td ><input class="stage-btn" type="text" name="ratio" id="id_ratio{{ forloop.counter }}" value="{{ foo.ratio }}" > </td>
+                                                <td><input class="stage-btn" type="text" name="end_date" id="id_end_date" value="{{ foo.end_date }}" disabled></td>
+                                                <td><input onchange="myfunc()" style="width: 40%" class="form-control" type="text" id="id_progress_num{{ forloop.counter }}" name="progress_num" value="" disabled>
+                                                </td>
+                                                <td><input  class="form-control"  style="width: 40%" name="final_rate" value="" id="id_final_rate{{ forloop.counter }}" type="text" disabled></td>
+                                                 <td>
+                                                    <textarea name="info" rows="2" cols="20" required disabled></textarea>
+                                                 </td>
+
+                                                  <td class="text-center">
+                                                      <button class="btn"  type="submit" style="font-size:large; color: darkred ; background: none">
+                                                          <i class="far fa-edit"></i>
+                                                      </button>
+                                                  </td>
+                                            </tr>
+                                         </form>
+                        {% endfor %}
+
+                        
+                         <input id="count" name="" type="hidden" value="{{ forloop.revcounter }}">
+                    {% endwith %}
+               {% endfor %}

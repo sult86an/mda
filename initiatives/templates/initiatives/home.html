@@ -1,0 +1,138 @@
+
+{% extends 'initiatives/base.html' %}
+{% block title %}متابعة أداء المشاريع{% endblock %}
+
+{% block body %}
+
+    <div class="center" style="width: 90%; margin-right: 5%">
+{#    <table id="mytable">#}
+{#         {% for object in object_list %}#}
+{#        <tr>#}
+{#            <td><input type="text" id="mub" value="{{ object.id }}_{{ forloop.counter }}"></td>#}
+{#            <td><input type="text" id="mub" value="{{ object }}_{{ forloop.counter }}"></td>#}
+{#            <td><input type="text" id="mub" value="{{ object.leader }}_{{ forloop.counter }}"></td>#}
+{#        </tr>#}
+{#        {% endfor %}#}
+{#    </table>#}
+
+{#       {{ forloop.counter }} -  {{ object.id }} - {{ object }} - {{ object.leader }} <br>#}
+    <div hidden>
+                {% for object in object_list %}
+            <input type="text" id="mub_{{ forloop.counter }}" value="{{ object }}">
+            <input type="text" id="leader_{{ forloop.counter }}" value="{{ object.leader }}">
+
+            <input type="text" id="id_{{ forloop.counter }}" value="{% spaceless %}{% for foo in  object.reports_set.all %}
+    {% if  forloop.first %}
+    {{ foo.ratio}}
+    {% endif %}
+{% endfor %}{% endspaceless %}">
+
+            <input type="hidden" id="number" value=" {{ forloop.revcounter }}">
+            <br>
+        {% endfor %}
+    </div>
+
+        <h3 class="text-center text-secondary" >المؤشر العام لأداء المشاريع</h3>
+    <div class="row" style="width: 95%; margin-right: 2.5%">
+        <div class="col-4">
+           <div class="row">
+               <div class="col" style="margin-top: 17%;">
+                    <label  style="margin-top: 5%">عدد المشاريع</label><span>( {{ initi_num.count }} )</span>
+               </div>
+           </div>
+           <div class="row">
+               <div class="col">
+                    <label  style="margin-top: 5%">نسبة الإنجاز الكلي</label><span id="finalall"></span>
+               </div>
+           </div>
+            <div class="row">
+                <a href="{% url 'initiatives:initiatives' %}" style="width: 98%">
+                    <div class="col" id="mbdView" >
+                        <label  style="margin-top: 2%; font-weight: bold">تفاصيل المشاريع </label>
+                        <i class="fas fa-chevron-circle-left"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+         <div class="col-8">
+             <div>
+                 <canvas id="myChart"  style="margin-top: 5%; margin-right:5%; padding: 0 !important;"></canvas>
+             </div>
+         </div>
+    </div>
+    </div>
+    <script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+        var list = document.getElementById('number').value;
+    console.log(list);
+
+        var mub=[];
+        var leader=[];
+        var idd=[];
+        for (var i=1; i <= list; i++){
+            var a = document.getElementById('mub_'+i).value;
+            var b = document.getElementById('leader_'+i).value;
+            var c = document.getElementById('id_'+i).value;
+            mub.push(a);
+            leader.push(b);
+            idd.push(c);
+        }
+var result=[];
+for (var i=0,l=idd.length;i<l;i++) result.push(+idd[i]); // or parseInt(arr[i]) or Number(arr[i])
+    var sum = result.reduce(add, 0);
+function add(a, b) {
+    return a + b;
+}
+    var final = (sum/idd.length);
+
+    document.getElementById('finalall').innerText = '( ' + parseInt(final) + ' %)';
+
+     Chart.defaults.global.defaultFontSize = 14;
+     Chart.defaults.global.defaultFontColor = '#2d2d2c';
+     Chart.defaults.global.defaultFontFamily = 'Tajawal-Regular';
+     Chart.defaults.global.legend.display = false;
+     ctx.fillText('Test text', 100 , 100);
+    vchart = new Chart(ctx, {
+    type: 'bar',
+
+    // The data for our dataset
+    data: {
+        labels:mub,
+        datasets: [{
+              label: "الإنجاز ",
+              data: idd,
+              fontFamily: 'Tajawal-Regular',
+              borderWidth: 1.5,
+              borderColor: '#328393',
+        }],
+    },
+
+    // Configuration options go here
+    options: {
+         title: {
+            display: true,
+            text: 'قياس تقدم الإنجاز',
+             fontWeight: 'normal',
+             fontSize: 18,
+             fontFamily: 'Tajawal-Regular',
+             fontColor: '#328393'
+        },
+
+         scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        },
+                        gridLines: {
+                            offsetGridLines: true
+                        }
+                    }]
+                },
+
+
+
+    }
+});
+    </script>
+{% endblock %}
+

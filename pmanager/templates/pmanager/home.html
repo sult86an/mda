@@ -1,0 +1,44 @@
+
+{% extends 'pmanager/base.html' %}
+{% block title %}إدارة المشاريع{% endblock %}
+
+{% block body %}
+    <style>
+
+    .col-6{
+            width: 50%;
+            font-size: 18pt;
+            text-align: center;
+            color: #328393
+    }
+    </style>
+
+    <div class="center" style="width: 90%; margin-right: 5%; height: 600px">
+        <div class="container">
+            <h3 class="text-center text-secondary" >بيانات المشروع</h3>
+            <hr>
+            <div class="row" style="margin-top: 5%">
+                <div class="col-6" style="padding: 2%">
+                <span style="color: #444444">اسم المشروع: </span>
+                    <span>
+                       {% for foo in mub %}
+                              {{ foo.mub_name }}
+                       {% endfor %}
+
+                    </span>
+                 </div>
+                 <div class="col-6" style="padding: 2%">
+                            <label style="color: #444444">نسبة الإنجاز: </label>
+                     <span>(
+                     {% for foo in mub.0.reports_set.all %}
+                       {%  if forloop.first %}
+                            %{{ foo.ratio }}
+                       {% endif %}
+                     {% endfor %} )
+                     </span>
+                 </div>
+             </div>
+        </div>
+    </div>
+{% endblock %}
+
